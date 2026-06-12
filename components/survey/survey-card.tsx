@@ -104,7 +104,9 @@ function isQualifiedForMeta(d: SurveyData): boolean {
   const okType = d.propertyType === 'single-family' || d.propertyType === 'multi-family'
   const okListed = d.listedOnMarket === 'not-listed'
   const okOwner = d.isLegalOwner !== 'no'
-  return okType && okListed && okOwner
+  const okTimeline = d.timeline !== 'flexible'
+  const okOwnership = d.ownershipLength !== 'less-than-3'
+  return okType && okListed && okOwner && okTimeline && okOwnership
 }
 function leadQuality(score: number): 'premium' | 'standard' | 'low' {
   if (score >= 6) return 'premium'
@@ -115,6 +117,8 @@ function disqualifyReasonFor(d: SurveyData): string {
   if (d.propertyType !== 'single-family' && d.propertyType !== 'multi-family') return 'property_type'
   if (d.listedOnMarket !== 'not-listed') return 'listed'
   if (d.isLegalOwner === 'no') return 'not_owner'
+  if (d.timeline === 'flexible') return 'flexible_timeline'
+  if (d.ownershipLength === 'less-than-3') return 'short_ownership'
   return 'unknown'
 }
 // ──────────────────────────────────────────────────────────────────────
@@ -379,6 +383,14 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
       setTimeout(() => { setDisqualifyReason("notOwner"); setIsDisqualified(true) }, 300)
       return
     }
+    if (field === "timeline" && value === "flexible") {
+      setTimeout(() => { setDisqualifyReason("flexibleTimeline"); setIsDisqualified(true) }, 300)
+      return
+    }
+    if (field === "ownershipLength" && value === "less-than-3") {
+      setTimeout(() => { setDisqualifyReason("shortOwnership"); setIsDisqualified(true) }, 300)
+      return
+    }
 
     setTimeout(() => { if (step < totalSteps) setStep(step + 1) }, 300)
   }
@@ -429,6 +441,16 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
         title: "Outside Our Service Area",
         message: "Unfortunately, we don't currently buy properties in that area.",
         detail: "We only serve select markets at this time. If you believe your property is within our coverage area, please try a different address or give us a call.",
+      },
+      flexibleTimeline: {
+        title: "We're Unable to Assist Right Now",
+        message: "Right now we're focused on homeowners who need to sell within a defined timeframe.",
+        detail: "If your situation changes and you need to sell soon, we'd be glad to help. Feel free to reach out at that time.",
+      },
+      shortOwnership: {
+        title: "We're Unable to Assist",
+        message: "We're currently only able to make offers to owners who have held their home for at least 3 years.",
+        detail: "If your situation is unique, feel free to give us a call and we'll see what we can do.",
       },
     }
     const msg = disqualifyMessages[disqualifyReason] || disqualifyMessages.notOwner
