@@ -298,6 +298,7 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
           address: surveyData.address,
           propertyType: surveyData.propertyType,
           isLegalOwner: surveyData.isLegalOwner,
+          listedOnMarket: surveyData.listedOnMarket,
           condition: surveyData.condition,
           timeline: surveyData.timeline,
           reason: surveyData.reason,
