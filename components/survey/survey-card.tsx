@@ -68,7 +68,6 @@ const REASON_OPTIONS = [
   { id: "relocation", label: "Job relocation" },
   { id: "downsizing", label: "Downsizing" },
   { id: "repairs", label: "Can't afford repairs" },
-  { id: "other", label: "Other" },
 ]
 
 const OWNERSHIP_LENGTH_OPTIONS = [
@@ -394,6 +393,10 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
       setTimeout(() => { setDisqualifyReason("shortOwnership"); setIsDisqualified(true) }, 300)
       return
     }
+    if (field === "condition" && value === "excellent") {
+      setTimeout(() => { setDisqualifyReason("excellentCondition"); setIsDisqualified(true) }, 300)
+      return
+    }
 
     setTimeout(() => { if (step < totalSteps) setStep(step + 1) }, 300)
   }
@@ -453,6 +456,11 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
       shortOwnership: {
         title: "We're Unable to Assist",
         message: "We're currently only able to make offers to owners who have held their home for at least 3 years.",
+        detail: "If your situation is unique, feel free to give us a call and we'll see what we can do.",
+      },
+      excellentCondition: {
+        title: "We're Unable to Assist",
+        message: "We focus on homeowners whose properties need some work. Homes in excellent, move-in-ready condition are usually a better fit for a traditional sale.",
         detail: "If your situation is unique, feel free to give us a call and we'll see what we can do.",
       },
     }
