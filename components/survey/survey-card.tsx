@@ -104,7 +104,7 @@ function isQualifiedForMeta(d: SurveyData): boolean {
   const okListed = d.listedOnMarket === 'not-listed'
   const okOwner = d.isLegalOwner !== 'no'
   const okTimeline = d.timeline !== 'flexible'
-  const okOwnership = d.ownershipLength !== 'less-than-3'
+  const okOwnership = d.ownershipLength !== 'less-than-3' && d.ownershipLength !== '3-to-5'
   const okCondition = d.condition !== 'excellent'
   return okType && okListed && okOwner && okTimeline && okOwnership && okCondition
 }
@@ -118,7 +118,7 @@ function disqualifyReasonFor(d: SurveyData): string {
   if (d.listedOnMarket !== 'not-listed') return 'listed'
   if (d.isLegalOwner === 'no') return 'not_owner'
   if (d.timeline === 'flexible') return 'flexible_timeline'
-  if (d.ownershipLength === 'less-than-3') return 'short_ownership'
+  if (d.ownershipLength === 'less-than-3' || d.ownershipLength === '3-to-5') return 'short_ownership'
   if (d.condition === 'excellent') return 'excellent_condition'
   return 'unknown'
 }
@@ -389,7 +389,7 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
       setTimeout(() => { setDisqualifyReason("flexibleTimeline"); setIsDisqualified(true) }, 300)
       return
     }
-    if (field === "ownershipLength" && value === "less-than-3") {
+    if (field === "ownershipLength" && (value === "less-than-3" || value === "3-to-5")) {
       setTimeout(() => { setDisqualifyReason("shortOwnership"); setIsDisqualified(true) }, 300)
       return
     }
@@ -455,7 +455,7 @@ export function SurveyCard({ phoneDisplay = "(800) 000-0000", phoneHref = "80000
       },
       shortOwnership: {
         title: "We're Unable to Assist",
-        message: "We're currently only able to make offers to owners who have held their home for at least 3 years.",
+        message: "We're currently only able to make offers to owners who have held their home for at least 5 years.",
         detail: "If your situation is unique, feel free to give us a call and we'll see what we can do.",
       },
       excellentCondition: {
