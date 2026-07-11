@@ -59,6 +59,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: "Address required" }, { status: 400 })
     }
 
+    // Blocklist — specific senders are silently dropped: return a normal success
+    // (they see the thank-you, no error, no reason to retry) but NO webhook,
+    // CRM, Discord, or CAPI fires. Added 2026-07-11 per William (M&G).
+    const BLOCKED_PHONES = new Set(["4792528900"])
+    const BLOCKED_EMAILS = new Set(["moondanze@aol.com"])
+    if (BLOCKED_PHONES.has(phone) || BLOCKED_EMAILS.has(email)) {
+      return NextResponse.json({ success: true })
+    }
+
     // Add server IP to payload
     const payload = { ...data, server_ip: ip }
 
